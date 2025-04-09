@@ -19,11 +19,11 @@ class Tables(Base):
     """
 
     __tablename__ = 'tables'
-    #basic fields
+    #basic fields 
     id: Mapped[int] = mapped_column(primary_key=True,autoincrement=True)  
-    name: Mapped[str] = mapped_column(nullable=False)
-    seats: Mapped[int] = mapped_column(nullable=False)
-    location: Mapped[str] = mapped_column(nullable=False)
+    name: Mapped[str] = mapped_column(nullable=False,default="Unknown")
+    seats: Mapped[int] = mapped_column(nullable=False,default=1)
+    location: Mapped[str] = mapped_column(nullable=False,default="Default")
     #relationships
     reserved_tables = relationship("Reservations",back_populates="table",cascade="all, delete",passive_deletes=True, lazy="selectin")
 
