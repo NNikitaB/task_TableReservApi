@@ -22,9 +22,23 @@ class Reservations(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     customer_name: Mapped[str] = mapped_column(nullable=False)
     table_id: Mapped[int] = mapped_column(ForeignKey("tables.id",ondelete="CASCADE"), nullable=False)
-    reservation_time = mapped_column(DateTime, default=datetime.now(UTC))
+    reservation_time = mapped_column(DateTime(timezone=True), default=datetime.now(UTC))
     duration_minutes: Mapped[int] = mapped_column(Integer, default=60)
     #relationships
     table = relationship("Tables", back_populates="reserved_tables")
+
+
+    def to_dict(self,exclude_relate=True) -> dict:
+        """
+        Converts the SQLAlchemy model instance to a dictionary, including its basic attributes.
+        Excludes the relationships to avoid recursive structures.
+        """
+        return {
+            "id": self.id,
+            "customer_name": self.customer_name,
+            "table_id": self.table_id,
+            "reservation_time": self.reservation_time,
+            "duration_minutes": self.duration_minutes,
+        }
 
 

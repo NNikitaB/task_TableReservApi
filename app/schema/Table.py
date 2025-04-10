@@ -1,13 +1,12 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from typing import Optional, List
-from app.schema import ReservationGet
+from app.schema import ReservationResponse
 from datetime import datetime,UTC
 
 class TableBase(BaseModel):
     name: str
-    seats: int
+    seats: int = Field(default=4,ge=0)
     location: str
-    reserved_tables: Optional[List[ReservationGet]] = None
     class ConfigDict:
         from_attributes = True
         schema_extra = {
@@ -15,18 +14,19 @@ class TableBase(BaseModel):
                 "name": "table 2",
                 "seats": 3,
                 "location": "bar",
-                "reserved_tables": None
             }
         }
 
-class TableGet(TableBase):
-    pass
+class TableGet(BaseModel):
+    id: int
+    class ConfigDict:
+        from_attributes = True
 
 class TableCreate(TableBase):
-    id : int
+    pass
 
 class TableUpdate(TableCreate):
-    pass
+    id : int
 
-class TableResponse(TableCreate):
-    pass
+class TableResponse(TableUpdate):
+    reserved_tables: Optional[List[ReservationResponse]] = None

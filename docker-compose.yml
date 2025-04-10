@@ -3,7 +3,7 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16
-    container_name: postgres_fld
+    container_name: postgres_table
     environment:
       POSTGRES_USER: dev
       POSTGRES_PASSWORD: admin
@@ -11,7 +11,7 @@ services:
     ports:
       - "5435:5432"
     volumes:
-      - pgdata_fld:/var/lib/postgresql/data
+      - pgdata_table:/var/lib/postgresql/data
       #- ./deploy/init.sql:/docker-entrypoint-initdb.d/init-database.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U dev -d postgres"]
@@ -21,32 +21,32 @@ services:
       start_period: 10s
     networks:
       - net_shared
-  pgadmin:
-    container_name: pgadmin_fld
-    image: dpage/pgadmin4:7.2
-    command: -c 'max_connections=1000' -c 'shared_buffers=2GB' -c 'work_mem=524MB' -c 'maintenance_work_mem=256MB' -c 'effective_cache_size=2GB' -c 'max_worker_processes=10' 
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "dev@habr.com"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
-      PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    ports:
-      - "5050:80"
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
-          memory: 1G
-    networks:
-      - net_shared
+  # pgadmin:
+  #   container_name: pgadmin_fld
+  #   image: dpage/pgadmin4:7.2
+  #   command: -c 'max_connections=1000' -c 'shared_buffers=2GB' -c 'work_mem=524MB' -c 'maintenance_work_mem=256MB' -c 'effective_cache_size=2GB' -c 'max_worker_processes=10' 
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: "dev@habr.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "admin"
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   ports:
+  #     - "5050:80"
+  #   restart: unless-stopped
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '1'
+  #         memory: 1G
+  #   networks:
+  #     - net_shared
 
   fastapi:
     build:
       dockerfile: Dockerfile
       context: .
-    container_name: fastapi_fld
+    container_name: fastapi_table
     ports:
       - "8080:8080"   # FastAPI default port
     environment:
@@ -65,8 +65,8 @@ services:
     networks:
       - net_shared
 volumes:
-  pgdata_fld:
-  pgadmin-data:
+  pgdata_table:
+  # pgadmin-data:
 
 networks:
   net_shared:

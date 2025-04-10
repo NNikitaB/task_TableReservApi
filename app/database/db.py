@@ -1,4 +1,4 @@
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine, AsyncSession,AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase,declarative_base
 from sqlalchemy_utils import database_exists, create_database # type: ignore
 from sqlalchemy import MetaData

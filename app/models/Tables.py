@@ -27,4 +27,25 @@ class Tables(Base):
     #relationships
     reserved_tables = relationship("Reservations",back_populates="table",cascade="all, delete",passive_deletes=True, lazy="selectin")
 
+    def to_dict(self,exclude_relate=True) -> dict:
+        """
+        Converts the SQLAlchemy model instance to a dictionary, including its basic attributes.
+        Excludes the relationships to avoid recursive structures.
+        """
+        if exclude_relate:
+            return {
+                "id": self.id,
+                "name": self.name,
+                "seats": self.seats,
+                "location": self.location,
+            }
+        else:
+            return {
+            "id": self.id,
+            "name": self.name,
+            "seats": self.seats,
+            "location": self.location,
+            # Include the reservations
+            "reserved_tables": [reservation.to_dict() for reservation in self.reserved_tables]
+            }
 
