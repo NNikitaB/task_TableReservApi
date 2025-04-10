@@ -9,10 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 
-
 origins = [
-    "http://localhost:3000",
-
+    #"http://localhost:3000",
 ]
 
 
@@ -23,7 +21,7 @@ async def init_db(app: FastAPI):
 
 #db_created = create_tables()
 
-app = FastAPI(title=" Service API",lifespan=init_db,on_startup=[create_tables])
+app = FastAPI(title=" Service API",on_startup=[create_tables])
 
 app.add_middleware(
     CORSMiddleware,

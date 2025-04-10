@@ -7,7 +7,6 @@ class TableBase(BaseModel):
     name: str
     seats: int
     location: str
-    reserved_tables: Optional[List[ReservationResponse]] = None
     class ConfigDict:
         from_attributes = True
         schema_extra = {
@@ -15,7 +14,6 @@ class TableBase(BaseModel):
                 "name": "table 2",
                 "seats": 3,
                 "location": "bar",
-                "reserved_tables": None
             }
         }
 
@@ -31,4 +29,4 @@ class TableUpdate(TableCreate):
     id : int
 
 class TableResponse(TableUpdate):
-    pass
+    reserved_tables: Optional[List[ReservationResponse]] = None

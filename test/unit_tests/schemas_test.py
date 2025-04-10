@@ -77,8 +77,7 @@ def test_table_get(table_data):
     table_data['reserved_tables'] = [ReservationResponse(id=2,table_id=1, customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now())]
     table_get = TableCreate(**table_data)
     assert table_get.name == table_data["name"]
-    assert isinstance(table_get.reserved_tables, list)
-    assert isinstance(table_get.reserved_tables[0], ReservationResponse)
+
 
 
 # Test tableResponse schema validation (for response containing table details and reservations_access)

@@ -17,10 +17,12 @@ tables_router = APIRouter(prefix="/api/v1/tables", tags=["Tables"])
 @tables_router.post("/", response_model=TableResponse, status_code=status.HTTP_201_CREATED)
 async def create_table(table_data: TableCreate, db_session: AsyncSession = Depends(get_async_session)):
     service = TableService(UnitOfWork(db_session))
-    try:
-        return await service.create_table(table_data)
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+    
+    return await service.create_table(table_data)
+    #try:
+    #    return await service.create_table(table_data)
+    #except Exception as e:
+    #    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @tables_router.get("/}", response_model=List[TableResponse])

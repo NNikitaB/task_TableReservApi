@@ -1,4 +1,4 @@
-FROM python:3.13.3-slim
+FROM python:3.12.4
 WORKDIR /code
 RUN mkdir -p ./test/
 RUN mkdir -p ./app/
