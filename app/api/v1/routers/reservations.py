@@ -30,6 +30,15 @@ async def get_all_reservations(db_session: AsyncSession = Depends(get_async_sess
     service = ReservTableService(UnitOfWork(db_session))
     return await service.get_all_reserv()
 
+@reservations_router.delete("/delete_all", status_code=status.HTTP_200_OK)
+async def delete_all_table(db_session: AsyncSession = Depends(get_async_session)):
+    service = ReservTableService(UnitOfWork(db_session))
+    try:
+        await service.delete_all_reserv()
+        return {"message": f"All Reservation deleted successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
+
 
 @reservations_router.delete("/{id}", response_model=ReservationResponse)
 async def delete_reservation(id: int, db_session: AsyncSession = Depends(get_async_session)):

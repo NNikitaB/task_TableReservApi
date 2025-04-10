@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from typing import Optional, List
 from app.schema import ReservationResponse
 from datetime import datetime,UTC
 
 class TableBase(BaseModel):
     name: str
-    seats: int
+    seats: int = Field(default=4,ge=0)
     location: str
     class ConfigDict:
         from_attributes = True

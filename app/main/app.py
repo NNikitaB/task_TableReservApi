@@ -14,14 +14,14 @@ origins = [
 ]
 
 
-@asynccontextmanager
-async def init_db(app: FastAPI):
+#@asynccontextmanager
+#async def init_db(app: FastAPI):
 #    await create_tables()
-    yield
+#    yield
 
 #db_created = create_tables()
 
-app = FastAPI(title=" Service API",on_startup=[create_tables])
+app = FastAPI(title=" Service API",)#on_startup=[create_tables])
 
 app.add_middleware(
     CORSMiddleware,

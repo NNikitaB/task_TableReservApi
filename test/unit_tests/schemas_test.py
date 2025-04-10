@@ -20,7 +20,7 @@ def reservation_data():
     return {
         "customer_name": "Default",
         "duration_minutes": 60,
-        "reservation_time": datetime.now(),
+        "reservation_time": datetime.now(UTC),
         "table_id": 23,
     }
 
@@ -74,7 +74,7 @@ def test_table_update(table_data):
 
 # Test tableGet schema validation (including reservations_access as a list of ReservationGet)
 def test_table_get(table_data):
-    table_data['reserved_tables'] = [ReservationResponse(id=2,table_id=1, customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now())]
+    table_data['reserved_tables'] = [ReservationResponse(id=2,table_id=1, customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now(UTC))]
     table_get = TableCreate(**table_data)
     assert table_get.name == table_data["name"]
 
@@ -83,8 +83,8 @@ def test_table_get(table_data):
 # Test tableResponse schema validation (for response containing table details and reservations_access)
 def test_table_response(table_data):
     table_data['reserved_tables'] = [
-        ReservationResponse(id=1,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()),
-        ReservationResponse(id=2,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()+timedelta(minutes=100)),
+        ReservationResponse(id=1,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now(UTC)),
+        ReservationResponse(id=2,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now(UTC)+timedelta(minutes=100)),
         ]
     table_response = TableResponse(**table_data)
     assert table_response.name == table_data["name"]

@@ -10,9 +10,11 @@ Part roadmap:
 7. Create service for Table and Reservation
 8. Create test for Table and Reservation service
 9. Create endpoids for Table and Reservation
-
 10. Create test for Table and Reservation endpoints
 11. Add Alembic
 12. Add Docker
 13. Add docker-compose
+14. Add logging
+15. Add core
+
 

@@ -1,11 +1,11 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, Field,field_validator
 from typing import Optional, List
 from datetime import datetime, UTC
 
 
 class ReservationBase(BaseModel):
     reservation_time: datetime = datetime.now(UTC)
-    duration_minutes: int = 60
+    duration_minutes: int = Field(default=60, gt=0)
 
     class ConfigDict:
         from_attributes = True
@@ -18,14 +18,14 @@ class ReservationBase(BaseModel):
 
 
 class ReservationGet(BaseModel):
-    id: int
+    id: int = Field(..., ge=0)
     
     class ConfigDict:
         from_attributes = True
 
 
 class ReservationCreate(ReservationBase):
-    table_id: int
+    table_id: int= Field(..., ge=0)
     customer_name: str
 
 

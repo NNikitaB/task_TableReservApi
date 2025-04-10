@@ -13,13 +13,29 @@ from app.schema import (
 from app.models import Tables, Reservations
 from app.utils.patterns import IUnitOfWork, UnitOfWork
 from app.services.expt import TableNotFound, TableAlreadyReserv
-
+from datetime import datetime, timedelta
 
 
 class ReservTableService:
     """Service for working with  Reservations of Tables"""
     def __init__(self, uow: UnitOfWork):
         self.uow = uow
+
+    async def _is_check_conflict(self, reserv_data: ReservationCreate) -> bool:
+        """Check if reservation time is not conflict
+
+        :param reserv_data: ReservationCreate
+        :return: bool False if reservation time is not conflict, True otherwise
+        """
+        start_time = reserv_data.reservation_time
+        end_time = start_time + timedelta(minutes=reserv_data.duration_minutes)
+        reservs = await self.uow.reservations.get_list_reservs_by_table_id(reserv_data=reserv_data)
+        for reserv in reservs:
+            if reserv.reservation_time < end_time and \
+                reserv.reservation_time + timedelta(minutes=reserv.duration_minutes) > start_time:
+                return True
+        return False
+
 
 
     async def add_reserv_for_table(self,reserv_data: ReservationCreate) -> ReservationResponse:
@@ -30,9 +46,9 @@ class ReservTableService:
             if table is None:
                 raise TableNotFound("Table not found")
             
-            is_conflict = await self.uow.reservations.is_check_conflict(reserv_data=reserv_data)
+            is_conflict = await self._is_check_conflict(reserv_data=reserv_data)
             if is_conflict:
-                raise TableAlreadyReserv("Reservation already reserved")
+                raise TableAlreadyReserv("Conflict with existing reservation")
             
             reserv_table = Reservations(
                 table_id=reserv_data.table_id,
