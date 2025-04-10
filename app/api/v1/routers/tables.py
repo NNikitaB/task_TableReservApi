@@ -14,7 +14,7 @@ from app.database.db import get_async_session
 tables_router = APIRouter(prefix="/api/v1/tables", tags=["Tables"])
 
 
-@tables_router.post("/tables/", response_model=TableResponse, status_code=status.HTTP_201_CREATED)
+@tables_router.post("/", response_model=TableResponse, status_code=status.HTTP_201_CREATED)
 async def create_table(table_data: TableCreate, db_session: AsyncSession = Depends(get_async_session)):
     service = TableService(UnitOfWork(db_session))
     try:
@@ -22,13 +22,23 @@ async def create_table(table_data: TableCreate, db_session: AsyncSession = Depen
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
-@tables_router.get("/tables/{table_id}", response_model=TableResponse)
-async def get_table(table_id: int, db_session: AsyncSession = Depends(get_async_session)):
+
+@tables_router.get("/}", response_model=List[TableResponse])
+async def get_all_tables(table_id: int, db_session: AsyncSession = Depends(get_async_session)):
     service = TableService(UnitOfWork(db_session))
     try:
-        return await service.get_table(TableGet(id=table_id))
-    except TableNotFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Table not found")
+        return await service.get_all_tables()
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
+    
+@tables_router.delete("/{id}}", response_model=List[TableResponse])
+async def delete_table(id: int, db_session: AsyncSession = Depends(get_async_session)):
+    service = TableService(UnitOfWork(db_session))
+    table_delete = TableGet(id=id)
+    try:
+        return await service.delete_table(table_delete)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
 
 
 
