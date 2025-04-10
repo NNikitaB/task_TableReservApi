@@ -1,8 +1,8 @@
 from fastapi import FastAPI,HTTPException,Depends
 from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
-#from app.api.v1.endpoints.routers import routers
-#from app.database.db import create_tables
+from app.api.v1.endpoints.routers import routers
+from app.database.db import create_tables
 from contextlib import asynccontextmanager
 #add CORS
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,7 +12,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 origins = [
     "http://localhost:3000",
+
 ]
+
 
 @asynccontextmanager
 async def init_db(app: FastAPI):
@@ -21,7 +23,7 @@ async def init_db(app: FastAPI):
 
 #db_created = create_tables()
 
-app = FastAPI(title=" Service API",lifespan=init_db)#,on_startup=[create_tables])
+app = FastAPI(title=" Service API",lifespan=init_db,on_startup=[create_tables])
 
 app.add_middleware(
     CORSMiddleware,

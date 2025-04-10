@@ -28,3 +28,17 @@ class Reservations(Base):
     table = relationship("Tables", back_populates="reserved_tables")
 
 
+    def to_dict(self,exclude_relate=True) -> dict:
+        """
+        Converts the SQLAlchemy model instance to a dictionary, including its basic attributes.
+        Excludes the relationships to avoid recursive structures.
+        """
+        return {
+            "id": self.id,
+            "customer_name": self.customer_name,
+            "table_id": self.table_id,
+            "reservation_time": self.reservation_time,
+            "duration_minutes": self.duration_minutes,
+        }
+
+

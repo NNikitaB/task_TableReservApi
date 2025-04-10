@@ -17,18 +17,21 @@ class ReservationBase(BaseModel):
         }
 
 
-class ReservationGet(ReservationBase):
+class ReservationGet(BaseModel):
+    id: int
+    
+    class ConfigDict:
+        from_attributes = True
+
+
+class ReservationCreate(ReservationBase):
     table_id: int
     customer_name: str
 
 
-class ReservationCreate(ReservationGet):
+class ReservationUpdate(ReservationCreate):
     id: int
 
 
-class ReservationUpdate(ReservationCreate):
-    pass
-
-
-class ReservationResponse(ReservationGet):
+class ReservationResponse(ReservationUpdate):
     pass

@@ -29,7 +29,6 @@ def reservation_data():
 def test_reservation_create(reservation_data):
     reservation_data["id"] = 2
     reserv = ReservationCreate(**reservation_data)
-    assert reserv.id is not None
     assert reserv.duration_minutes == 60
     assert reserv.table_id == 23
     assert isinstance(reserv.reservation_time, datetime)
@@ -44,9 +43,8 @@ def test_reservation_update():
 def test_reservation_get(reservation_data):
     reservation_data['id'] = 1
     reserv = ReservationGet(**reservation_data)
-    assert reserv.table_id == 23
-    assert isinstance(reserv.reservation_time, datetime)
-    assert reserv.table_id is not None
+    assert reserv.id == 1
+   
 
 
 @pytest.fixture
@@ -63,7 +61,6 @@ def table_data():
 def test_table_create(table_data):
     table_create = TableCreate(**table_data)
     assert table_create.name == table_data["name"]
-    assert table_create.id == 4
     assert table_create.seats == 2
     assert table_create.location == table_create.location
 
@@ -77,21 +74,21 @@ def test_table_update(table_data):
 
 # Test tableGet schema validation (including reservations_access as a list of ReservationGet)
 def test_table_get(table_data):
-    table_data['reserved_tables'] = [ReservationGet(table_id=1, customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now())]
-    table_get = TableGet(**table_data)
+    table_data['reserved_tables'] = [ReservationResponse(id=2,table_id=1, customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now())]
+    table_get = TableCreate(**table_data)
     assert table_get.name == table_data["name"]
     assert isinstance(table_get.reserved_tables, list)
-    assert isinstance(table_get.reserved_tables[0], ReservationGet)
+    assert isinstance(table_get.reserved_tables[0], ReservationResponse)
 
 
 # Test tableResponse schema validation (for response containing table details and reservations_access)
 def test_table_response(table_data):
     table_data['reserved_tables'] = [
-        ReservationGet(table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()),
-        ReservationGet(table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()+timedelta(minutes=100)),
+        ReservationResponse(id=1,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()),
+        ReservationResponse(id=2,table_id=table_data["id"], customer_name="John Doe", duration_minutes=60, reservation_time=datetime.now()+timedelta(minutes=100)),
         ]
     table_response = TableResponse(**table_data)
     assert table_response.name == table_data["name"]
     assert isinstance(table_response.reserved_tables, list)
     assert len(table_response.reserved_tables) == 2
-    assert isinstance(table_response.reserved_tables[0], ReservationGet)
+    assert isinstance(table_response.reserved_tables[0], ReservationResponse)
