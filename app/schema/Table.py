@@ -8,6 +8,16 @@ class TableBase(BaseModel):
     seats: int
     location: str
     reserved_tables: Optional[List[ReservationGet]] = None
+    class ConfigDict:
+        from_attributes = True
+        schema_extra = {
+            "example": {
+                "name": "table 2",
+                "seats": 3,
+                "location": "bar",
+                "reserved_tables": None
+            }
+        }
 
 class TableGet(TableBase):
     pass
