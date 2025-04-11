@@ -6,7 +6,7 @@ from app.database.db import create_tables
 from contextlib import asynccontextmanager
 #add CORS
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.core.logger import logger
 
 
 origins = [
@@ -21,7 +21,9 @@ origins = [
 
 #db_created = create_tables()
 
-app = FastAPI(title=" Service API",)#on_startup=[create_tables])
+app = FastAPI(title="Service API",)#on_startup=[create_tables])
+
+logger.info("Init CORS")
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,7 +34,7 @@ app.add_middleware(
     
 )
 
-
+logger.info("Include routers")
 app.include_router(routers)
 
 
@@ -41,6 +43,7 @@ async def root():
     return {"message": "Service API created by NNikitaB"}
 
 
+logger.info("App started")
 
 #if __name__ == "__main__":
 #    uvicorn.run(f"{__name__}:app",host="127.0.0.1", port=8080, reload=True)

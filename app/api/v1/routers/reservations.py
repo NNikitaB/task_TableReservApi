@@ -9,6 +9,8 @@ from app.services import ReservTableService, TableService
 from typing import List
 from fastapi import APIRouter
 from app.database.db import get_async_session
+from app.core import logger
+
 
 
 reservations_router = APIRouter(prefix="/api/v1/reservations", tags=["Reservations"])
