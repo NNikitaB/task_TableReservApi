@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 #from sqlalchemy.orm.unitofwork import UOWTransaction
 from uuid import UUID
 from app.models.Base import Base
-from core import logger
+from app.core import logger
 
 T = TypeVar("T", bound=Base)
 

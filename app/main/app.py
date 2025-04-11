@@ -20,11 +20,11 @@ origins = [
 #    yield
 
 #db_created = create_tables()
-
+# app: FastAPI
 app = FastAPI(title="Service API",)#on_startup=[create_tables])
 
 logger.info("Init CORS")
-
+#add CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -38,8 +38,15 @@ logger.info("Include routers")
 app.include_router(routers)
 
 
+
 @app.get("/")
 async def root():
+    """
+    Root endpoint that returns a simple service information message.
+
+    Returns:
+        dict: A dictionary containing a welcome message about the Service API.
+    """
     return {"message": "Service API created by NNikitaB"}
 
 

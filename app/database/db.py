@@ -22,7 +22,7 @@ else:
 
 # Создание асинхронного движка SQLAlchemy
 engine = create_async_engine(url=url,pool_size=100,max_overflow=200,)
-logger.info(f"🛠️ Database engine created with URL: {url}")
+logger.info(f"Database engine created with URL: {url}")
 
 if settings.MODE == "TEST":
     engine = create_async_engine(url=url)
@@ -52,7 +52,7 @@ async def get_async_session():
 
 async def create_tables():
     async with engine.begin() as conn:
-        logger.info("⚙️ Creating tables in the database...")
+        logger.info(" Creating tables in the database...")
         await conn.run_sync(Base.metadata.create_all)
-        logger.info("✅ Tables created successfully.")
+        logger.info(" Tables created successfully.")
 

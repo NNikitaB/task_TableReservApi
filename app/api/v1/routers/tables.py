@@ -18,49 +18,104 @@ tables_router = APIRouter(prefix="/api/v1/tables", tags=["Tables"])
 
 @tables_router.post("/", response_model=TableResponse, status_code=status.HTTP_201_CREATED)
 async def create_table(table_data: TableCreate, db_session: AsyncSession = Depends(get_async_session)):
-    logger.info(f"🔧 Creating new table with data: {table_data}")
+    """
+    Create a new table in the database.
+
+    Args:
+        table_data (TableCreate): The data used to create a new table
+        db_session (AsyncSession, optional): Async database session dependency
+
+    Returns:
+        TableResponse: The newly created table
+
+    Raises:
+        HTTPException: 404 Not Found if the table is not found
+        HTTPException: 500 Internal Server Error if an unexpected error occurs
+    """
+    logger.info(f" Creating new table with data: {table_data}")
     service = TableService(UnitOfWork(db_session))
     try:
        return await service.create_table(table_data)
+    except TableNotFound as e:
+       logger.error(" Table not found")
+       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
-       logger.error(f"❌ Error creating table: {str(e)}")
-       raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+       logger.error(f" Error creating table: {str(e)}")
+       raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,detail=str(e))
+
 
 
 @tables_router.get("/", response_model=List[TableResponse])
 async def get_all_tables(db_session: AsyncSession = Depends(get_async_session)):
-    logger.info("🔄 Retrieving all tables")
+    """
+    Retrieve all tables from the database.
+
+    Returns:
+        A list of all table responses
+
+    Raises:
+        HTTPException: 404 Not Found if an error occurs during table retrieval
+    """
+    logger.info(" Retrieving all tables")
     service = TableService(UnitOfWork(db_session))
     try:
         return await service.get_all_tables()
     except Exception as e:
-        logger.error(f"❌ Error retrieving tables: {str(e)}")
+        logger.error(f" Error retrieving tables: {str(e)}")
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
 
 
 @tables_router.delete("/delete_all", status_code=status.HTTP_200_OK)
 async def delete_all_table(db_session: AsyncSession = Depends(get_async_session)):
-    logger.info("🗑️ Deleting all tables")
+    """
+    Delete all tables from the database.
+
+    Args:
+        db_session: Async database session dependency
+
+    Returns:
+        A dictionary with a success message confirming all tables were deleted
+
+    Raises:
+        HTTPException: 404 Not Found if an error occurs during table deletion
+    """
+    logger.info(" Deleting all tables")
     service = TableService(UnitOfWork(db_session))
     try:
         await service.delete_all_tables()
         return {"message": f"All Tables deleted successfully"}
     except Exception as e:
-        logger.error(f"❌ Error deleting all tables: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
+        logger.error(f" Error deleting all tables: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e)
 
 
 @tables_router.delete("/{id}", status_code=status.HTTP_200_OK)
 async def delete_table(id: int, db_session: AsyncSession = Depends(get_async_session)):
-    logger.info(f"🗑️ Deleting table with ID {id}")
+    """
+    Delete a specific table by its ID.
+    
+    Args:
+        id: The unique identifier of the table to delete
+        db_session: Database session dependency
+        
+    Returns:
+        A success message confirming the table deletion
+        
+    Raises:
+        HTTPException: 404 Not Found if the table doesn't exist or other errors occur
+    """
+    logger.info(f" Deleting table with ID {id}")
     service = TableService(UnitOfWork(db_session))
     table_delete = TableGet(id=id)
     try:
         await service.delete_table(table_delete)
-        logger.info(f"✅ Table with ID {id} deleted successfully.")
+        logger.info(f" Table with ID {id} deleted successfully.")
         return {"message": f"Table id = {id} deleted successfully"}
+    except TableNotFound as e:
+       logger.error(" Table not found")
+       raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except Exception as e:
-        logger.error(f"❌ Error deleting table with ID {id}: {str(e)}")
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
+        logger.error(f" Error deleting table with ID {id}: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e)
 
 
