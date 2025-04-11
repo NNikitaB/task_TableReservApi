@@ -83,6 +83,7 @@ async def delete_all_table(db_session: AsyncSession = Depends(get_async_session)
     service = TableService(UnitOfWork(db_session))
     try:
         await service.delete_all_tables()
+        logger.info(" All reservations deleted successfully.")
         return {"message": f"All Tables deleted successfully"}
     except Exception as e:
         logger.error(f" Error deleting all tables: {str(e)}")
