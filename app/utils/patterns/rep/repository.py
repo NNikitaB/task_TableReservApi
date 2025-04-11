@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 #from sqlalchemy.orm.unitofwork import UOWTransaction
 from uuid import UUID
 from app.models.Base import Base
+from app.core import logger
 
 T = TypeVar("T", bound=Base)
 
@@ -90,13 +91,16 @@ class BaseSqlAsyncRepository(BaseRepository[T], ABC):
         """
         self._session = session
         self._model_cls = model_cls
+        logger.debug(f"Initialized {self._model_cls.__name__} repository")
 
     def _construct_get_stmt(self, id: int) -> Any:
         stmt = select(self._model_cls).where(getattr(self._model_cls, "id") == id)
+        logger.debug(f"Constructing get statement for {self._model_cls.__name__} with ID={id}")
         return stmt
     
     async def get_by_identifier(self, id: int) -> Optional[T]:
         stmt = self._construct_get_stmt(id)
+        logger.info(f"Fetching {self._model_cls.__name__} by identifier: {id}")
         res = await self._session.execute(stmt)
         return res.scalar_one_or_none()
 
@@ -105,6 +109,7 @@ class BaseSqlAsyncRepository(BaseRepository[T], ABC):
         where_clauses = []
         for c, v in filters.items():
             if not hasattr(self._model_cls, c):
+                logger.error(f"Invalid column name {c} for {self._model_cls.__name__}")
                 raise ValueError(f"Invalid column name {c}")
             where_clauses.append(getattr(self._model_cls, c) == v)
         if len(where_clauses) == 1:
@@ -114,23 +119,29 @@ class BaseSqlAsyncRepository(BaseRepository[T], ABC):
         return stmt
 
     async def list(self, **filters) -> List[T]:
+        logger.info(f"Listing {self._model_cls.__name__} with filters: {filters}")
         stmt = self._construct_list_stmt(**filters)
         res = await self._session.execute(stmt)
         return list(res.scalars().all())
 
     async def add(self, record: T) -> T:
+        logger.info(f"Adding new {self._model_cls.__name__}: {record}")
         self._session.add(record)
         await self._session.flush()
         await self._session.refresh(record)
+        logger.info(f"Added {self._model_cls.__name__}: {record}")
         return record
 
     async def update(self, record: T) -> T:
+        logger.info(f"Updating {self._model_cls.__name__}: {record}")
         self._session.add(record)
         await self._session.flush()
         await self._session.refresh(record)
+        logger.info(f"Updated {self._model_cls.__name__}: {record}")
         return record
 
     async def delete(self, id: int) -> None:
+        logger.info(f"Deleting {self._model_cls.__name__} with ID={id}")
         record = await self.get_by_identifier(id)
         if record is not None:
             await self._session.delete(record)

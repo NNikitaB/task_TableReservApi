@@ -3,7 +3,17 @@ from typing import Optional, List
 from datetime import datetime, UTC
 
 
+
 class ReservationBase(BaseModel):
+    """
+    Base Pydantic model for reservation data with default reservation time and duration.
+
+    Attributes:
+        reservation_time (datetime): Timestamp of the reservation, defaults to current UTC time.
+        duration_minutes (int): Length of the reservation in minutes, must be greater than 0.
+
+    Configures model to support attribute-based instantiation and provides an example schema.
+    """
     reservation_time: datetime = datetime.now(UTC)
     duration_minutes: int = Field(default=60, gt=0)
 

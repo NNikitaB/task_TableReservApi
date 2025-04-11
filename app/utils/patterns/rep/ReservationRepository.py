@@ -4,10 +4,12 @@ from app.schema import ReservationCreate, ReservationUpdate, ReservationBase, Re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, or_, and_
 from datetime import datetime, timedelta
+from app.core import logger
 
 class ReservationRepository(BaseSqlAsyncRepository[Reservations]):
     def __init__(self, session: AsyncSession):
         super().__init__(session,Reservations)
+        logger.debug("Initialized Reservation repository")
 
 
     async def get_list_reservs_by_table_id(self, reserv_data:ReservationCreate) -> list[ReservationBase]:
@@ -16,9 +18,12 @@ class ReservationRepository(BaseSqlAsyncRepository[Reservations]):
         :param reserv_data: ReservationCreate
         :return: list[ReservationBase]
         """
+        logger.info(f"Get list reservation by table id: {reserv_data.table_id}")
         stmt = select(Reservations).where(Reservations.table_id == reserv_data.table_id)
         result = await self._session.execute(stmt)
-        return [ReservationBase.model_validate(i.to_dict()) for i in result.scalars().all()]
+        reservations =  [ReservationBase.model_validate(i.to_dict()) for i in result.scalars().all()]
+        logger.info(f"Found {len(reservations)} reservations for table_id={reserv_data.table_id}")
+        return reservations
 
     # async def is_check_conflict(self, reserv_data:ReservationCreate) -> bool:
     #     """Check if reservation time is not conflict
