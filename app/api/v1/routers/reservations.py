@@ -84,7 +84,7 @@ async def get_all_reservations(db_session: AsyncSession = Depends(get_async_sess
 
 
 
-@reservations_router.delete("/delete_all", status_code=status.HTTP_200_OK)
+#@reservations_router.delete("/delete_all", status_code=status.HTTP_200_OK)
 async def delete_all_table(db_session: AsyncSession = Depends(get_async_session)):
     """
     Delete all table reservations.

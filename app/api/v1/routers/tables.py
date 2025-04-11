@@ -65,7 +65,7 @@ async def get_all_tables(db_session: AsyncSession = Depends(get_async_session)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e)
 
 
-@tables_router.delete("/delete_all", status_code=status.HTTP_200_OK)
+#@tables_router.delete("/delete_all", status_code=status.HTTP_200_OK)
 async def delete_all_table(db_session: AsyncSession = Depends(get_async_session)):
     """
     Delete all tables from the database.
