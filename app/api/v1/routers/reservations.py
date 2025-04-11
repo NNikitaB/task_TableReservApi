@@ -50,7 +50,7 @@ async def create_reservation(reservation_data: ReservationCreate, db_session: As
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Table not found")
     except TableAlreadyReserv:
         logger.error(f" Conflict: Table already reserved at {reservation_data.reservation_time}")
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Table already reserved")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Conflict: Table to Date already reserved")
     except Exception as e:
         logger.error(f" Error creating reservation: {str(e)}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=e)
